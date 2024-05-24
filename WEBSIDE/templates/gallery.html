@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* Your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1f1f1f; /* Dark background color */
+            color: #fff; /* Light text color */
+        }
+
+        .container {
+            margin: 20px auto; /* Center the container */
+            padding: 0 10px; /* Reduced padding */
+            max-width: calc(100vw - 40px); /* Set maximum width */
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-gap: 10px; /* Reduced grid gap */
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transition for box-shadow */
+            cursor: pointer; /* Change cursor to pointer when hovering over images */
+            border-radius: 10px; /* Add border radius */
+        }
+
+        .gallery-item img:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5); /* Add glow effect on hover */
+        }
+
+        .fullscreen-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: none; /* Hidden by default */
+            flex-direction: column; /* Stack children vertically */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .fullscreen-image img {
+            max-width: 90%;
+            max-height: 70%;
+        }
+
+        .fullscreen-image .actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .fullscreen-image .actions button {
+            background-color: #333; /* Dark button background */
+            color: #fff; /* Light button text */
+            border: none;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .fullscreen-image .actions button:hover {
+            background-color: #555; /* Lighter button background on hover */
+        }
+
+        .pagination {
+            margin-top: 20px;
+        }
+
+        .page-link {
+            text-decoration: none;
+            color: #fff; /* Light text color */
+            padding: 5px 10px;
+            margin-right: 5px;
+            border: 1px solid #fff; /* Light border color */
+            border-radius: 5px;
+        }
+
+        .page-link:hover {
+            background-color: #333; /* Dark background color on hover */
+            border-color: #fff; /* Light border color on hover */
+        }
+
+        @media screen and (max-width: 600px) {
+            .gallery {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gallery</h1>
+        <div class="gallery">
+            {% for image in image_files %}
+            <div class="gallery-item">
+                <img src="{{ url_for('static', filename='images/' + image) }}" alt="Image" onclick="openFullscreen(this)">
+            </div>
+            {% endfor %}
+        </div>
+        <div class="pagination">
+            {% set num_pages = (image_files | length // 10) + 1 %}
+            {% for i in range(1, num_pages) %}
+                <a href="/gallery?page={{ i }}" class="page-link">{{ i }}</a>
+            {% endfor %}
+        </div>
+        <p><a href="/">Back to Home</a></p>
+    </div>
+
+    <div id="fullscreenImage" class="fullscreen-image">
+        <img id="fullscreenImg" src="" alt="Fullscreen Image">
+        <div class="actions">
+            <button onclick="likeImage()">Like</button>
+            <button onclick="commentImage()">Comment</button>
+            <button onclick="shareImage()">Share</button>
+            <a id="downloadLink" download><button>Download</button></a>
+        </div>
+        <button onclick="closeFullscreen()" style="margin-top: 10px;">Close</button>
+    </div>
+
+    <script>
+        /* JavaScript for full-screen functionality */
+        function openFullscreen(element) {
+            const fullscreenDiv = document.getElementById('fullscreenImage');
+            const fullscreenImg = document.getElementById('fullscreenImg');
+            const downloadLink = document.getElementById('downloadLink');
+            fullscreenImg.src = element.src;
+            downloadLink.href = element.src;
+            fullscreenDiv.style.display = 'flex';
+        }
+
+        function closeFullscreen() {
+            document.getElementById('fullscreenImage').style.display = 'none';
+        }
+
+        function likeImage() {
+            alert('Liked!');
+        }
+
+        function commentImage() {
+            const comment = prompt('Enter your comment:');
+            if (comment) {
+                alert(`Comment: ${comment}`);
+            }
+        }
+
+        function shareImage() {
+            alert('Shared!');
+        }
+    </script>
+</body>
+</html>
