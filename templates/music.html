@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Gallery</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style_mus.css') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <div class="intimg">
+            <div class = 'typing-container'><span id="typing-text"></span></div>
+            
+        </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+            const text = "Welcome to our Music Picture Gallery,<br> where the beauty of sound meets the art of imagery.<br> Explore captivating photos that celebrate music,<br> capturing moments of harmony, passion, and inspiration.";
+            const typingText = document.getElementById("typing-text");
+            let index = 0;
+
+            function type() {
+                if (index < text.length) {
+                if (text.charAt(index) === '<') {
+                    let tag = '';
+                    while (text.charAt(index) !== '>') {
+                    tag += text.charAt(index);
+                    index++;
+                    }
+                    tag += '>';
+                    typingText.innerHTML += tag;
+                } else {
+                    typingText.innerHTML += text.charAt(index);
+                }
+                index++;
+                setTimeout(type, 100); // Adjust the typing speed here
+                }
+            }
+
+            type();
+            });
+
+        </script>
+        <style>
+            
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #000000; 
+                color: #fff; 
+            }
+
+
+    
+
+
+            .container {
+                margin: 20px auto; 
+                padding: 0 10px; 
+                max-width: calc(100vw - 40px); 
+            }
+    
+            .gallery {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                grid-gap: 10px; 
+            }
+    
+            .gallery-item {
+                position: relative;
+                overflow: hidden;
+            }
+    
+            .gallery-item img {
+                width: 100%;
+                height: auto;
+                transition: transform 0.3s ease, box-shadow 0.3s ease; 
+                cursor: pointer; 
+                border-radius: 10px; 
+            }
+    
+            .gallery-item img:hover {
+                transform: scale(1.1);
+                box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            }
+    
+            .fullscreen-image {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.9);
+                display: none;
+                flex-direction: column; 
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            }
+    
+            .fullscreen-image img {
+                max-width: 90%;
+                max-height: 70%;
+            }
+    
+            .fullscreen-image .actions {
+                display: flex;
+                justify-content: center;
+                margin-top: 10px;
+            }
+    
+            .fullscreen-image .actions a, .fullscreen-image .actions i {
+                color: #fff; 
+                font-size: 24px; 
+                margin: 0 10px; 
+                cursor: pointer;
+            }
+    
+            .fullscreen-image .actions i:hover {
+                color: #aaa;
+            }
+    
+            .pagination {
+                margin-top: 20px;
+            }
+    
+            .page-link {
+                text-decoration: none;
+                color: #fff;
+                padding: 5px 10px;
+                margin-right: 5px;
+                border: 1px solid #fff; 
+                border-radius: 5px;
+            }
+    
+            .page-link:hover {
+                background-color: #333;
+                border-color: #fff; 
+            }
+    
+            @media screen and (max-width: 600px) {
+                .gallery {
+                    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                }
+            }
+        </style>
+    </head>
+<body>
+    <body>
+        <div class="container">
+            <h1>Gallery - MUSIC</h1>
+            <div class="gallery">
+                {% for image in image_files %}
+                <div class="gallery-item">
+                    <img src="{{ url_for('static', filename='MUSIC/' + image) }}" alt="Image" onclick="openFullscreen(this)">
+                </div>
+                {% endfor %}
+            </div>
+            <div class="pagination">
+                {% set num_pages = (image_files | length // 10) + 1 %}
+                {% for i in range(1, num_pages) %}
+                    <a href="/gallery?page={{ i }}" class="page-link">{{ i }}</a>
+                {% endfor %}
+            </div>
+            <p><a href="/">Back to Home</a></p>
+        </div>
+    
+        <div id="fullscreenImage" class="fullscreen-image">
+            <img id="fullscreenImg" src="" alt="Fullscreen Image">
+            <div class="actions">
+                <i class="fas fa-thumbs-up" onclick="likeImage()"></i>
+                <i class="fas fa-comment" onclick="commentImage()"></i>
+                <i class="fas fa-share" onclick="shareImage()"></i>
+                <a id="downloadLink" download>
+                    <i class="fas fa-download"></i>
+                </a>
+            </div>
+            <button onclick="closeFullscreen()" style="margin-top: 10px;">Close</button>
+        </div>
+    
+        <script>
+           
+            function openFullscreen(element) {
+                const fullscreenDiv = document.getElementById('fullscreenImage');
+                const fullscreenImg = document.getElementById('fullscreenImg');
+                const downloadLink = document.getElementById('downloadLink');
+                fullscreenImg.src = element.src;
+                downloadLink.href = element.src;
+                fullscreenDiv.style.display = 'flex';
+            }
+    
+            function closeFullscreen() {
+                document.getElementById('fullscreenImage').style.display = 'none';
+            }
+    
+            function likeImage() {
+                alert('Liked!');
+            }
+    
+            function commentImage() {
+                const comment = prompt('Enter your comment:');
+                if (comment) {
+                    alert(`Comment: ${comment}`);
+                }
+            }
+    
+            function shareImage() {
+                alert('Shared!');
+            }
+        </script>
+    </body>
+</html>    
